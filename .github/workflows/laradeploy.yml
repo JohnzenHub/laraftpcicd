@@ -1,0 +1,36 @@
+name: Publish Website to CPanel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.1.0
+        with:
+          fetch-depth: 2 # Best for deploys with change detection(last 2 commits).
+
+      # - name: Build assets
+      #   run: npm install && npm run build
+      #   # If frontend is in a subfolder, uncomment:
+      #   # working-directory: ./frontend
+
+      - name: Install PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2" # Adjust to match your Laravel PHP version
+          tools: composer
+
+      - name: Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        # with:
+        #   server: ${{ secrets.SERVER }}
+        #   username: ${{ secrets.USERNAME }}
+        #   password: ${{ secrets.PASSWORD }}
